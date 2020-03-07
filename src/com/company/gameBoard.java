@@ -14,31 +14,28 @@ public class gameBoard {
         playerOne.playerToken = "O";
         playerTwo.playerToken = "X";
 
-//        System.out.println("Please Enter player one's name");
-//        playerOne.name = System.console().readLine();
-//
-//        System.out.println("Please Enter player two's name");
-//        playerTwo.name = System.console().readLine();
+        System.out.println("Please Enter player one's name");
+        playerOne.name = System.console().readLine();
+
+        System.out.println("Please Enter player two's name");
+        playerTwo.name = System.console().readLine();
 
         newGame();
 
         boolean gameOver = false;
         int counter = 0;
-//        String token = "X";
-//        boardScan(token);
+        String token = "X";
+        boardScan(token);
 
         do {
             counter++;
             display();
             System.out.println(playerOne.name + ", please take your turn");
-            playerOne.playerTurn = System.console().readLine();
-            //playerOne.playerTurn = "1";
             handleTurn(playerOne.playerTurn, playerOne.playerToken);
 
             display();
             System.out.println(playerTwo.name + ", please take your turn");
             playerTwo.playerTurn = System.console().readLine();
-            //playerTwo.playerTurn = "0";
             handleTurn(playerTwo.playerTurn, playerTwo.playerToken);
 
             if (counter > 42) {
@@ -51,7 +48,6 @@ public class gameBoard {
     void retakeTurn(String token) {
 
         System.out.println("That was not a valid move.... try again");
-        //String column = "2";
         String column = System.console().readLine();
         handleTurn(column, token);
     }

@@ -8,11 +8,8 @@ import java.io.*;
 
     public static void main(String[] args) {
 
-
-        gameBoard board = new gameBoard();
-        board.playerVsPlayer();
-//        startup();
-//        homePage();
+        startup();
+        homePage();
     }
 
     static void homePage() {
@@ -50,9 +47,9 @@ import java.io.*;
         }
     }
 
-static void displayHeader(){
+    static void displayHeader(){
 
-    System.out.println(
+        System.out.println(
             "   _____                            _     ______               \n" +
             "  / ____|                          | |   |  ____|              \n" +
             " | |     ___  _ __  _ __   ___  ___| |_  | |__ ___  _   _ _ __ \n" +
