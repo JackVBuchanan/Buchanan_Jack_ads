@@ -31,6 +31,7 @@ public class gameBoard {
             counter++;
             display();
             System.out.println(playerOne.name + ", please take your turn");
+            playerOne.playerTurn = System.console().readLine();
             handleTurn(playerOne.playerTurn, playerOne.playerToken);
 
             display();
@@ -54,11 +55,12 @@ public class gameBoard {
 
     void handleTurn(String column, String token) {
 
-        int y = Integer.parseInt(column);
+        int y = 0;
         int x = 0;
         int lastRow = boardArray.length - 1;
 
         try {
+            y = Integer.parseInt(column);
             if (boardArray[lastRow][y] == " ") {
                 boardArray[lastRow][y] = token;
             } else {
@@ -74,7 +76,7 @@ public class gameBoard {
                     }
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException exception) {
+        } catch (ArrayIndexOutOfBoundsException | NumberFormatException exception) {
             retakeTurn(token);
         }
     }
@@ -113,6 +115,7 @@ public class gameBoard {
 
         int winCount = 0;
 
+        //Horizontal check
         for (int x = 0; x < boardArray.length; x++) {
             StringBuilder row = new StringBuilder();
             for (int y = 0; y < boardArray[0].length; y++) {
@@ -126,7 +129,7 @@ public class gameBoard {
                 }
             }
         }
-
+        //Vertical check
         for (int y = 0; y < boardArray[0].length; y++) {
             StringBuilder row = new StringBuilder();
             for (int x = 0; x < boardArray.length; x++) {
@@ -141,7 +144,6 @@ public class gameBoard {
             }
         }
     }
-
 
     void handleWin(){
 
