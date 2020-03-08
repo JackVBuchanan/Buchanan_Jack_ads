@@ -92,9 +92,8 @@ public class gameBoard {
 
     void display() {
 
-        Main options = new Main();
-        options.clear();
-        options.displayHeader();
+        Main.clear();
+        Main.displayHeader();
 
         for (int x = 0; x < boardArray.length; x++) {
             StringBuilder row = new StringBuilder();

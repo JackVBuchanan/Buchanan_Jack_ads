@@ -1,13 +1,8 @@
 package com.company;
 
-
-import java.io.*;
-
  class Main {
 
-
     public static void main(String[] args) {
-
         startup();
         homePage();
     }
@@ -37,6 +32,7 @@ import java.io.*;
             case "3":
                 clear();
                 startup();
+                readConfig.settings();
                 System.out.println("Options page coming soon...\n\n");
                 homePage();
                 break;
