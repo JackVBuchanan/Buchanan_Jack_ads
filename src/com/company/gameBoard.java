@@ -129,6 +129,7 @@ public class gameBoard {
                 }
             }
         }
+
         //Vertical check
         for (int y = 0; y < boardArray[0].length; y++) {
             for (int x = 0; x < boardArray.length; x++) {
@@ -193,10 +194,11 @@ public class gameBoard {
         }
 
         //Downhill diagonal check
-        for (int x = boardArray.length; x > -1; x--) {
+        for (int x = boardArray.length-1; x > -1; x--) {
             int i = x;
             int j = 0;
             limit = false;
+            winCount = 0;
             do {
                 try {
                     if (boardArray[i][j] == token) {
@@ -219,6 +221,7 @@ public class gameBoard {
                     i = x;
                     j = y;
                     limit = false;
+                    winCount = 0;
                     do {
                         try {
                             if (boardArray[i][j] == token) {
@@ -248,5 +251,4 @@ public class gameBoard {
         Main home = new Main();
         home.homePage();
     }
-
 }
