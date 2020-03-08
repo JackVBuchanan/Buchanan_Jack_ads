@@ -114,32 +114,127 @@ public class gameBoard {
     void boardScan(String token) {
 
         int winCount = 0;
+        boolean limit = false;
 
         //Horizontal check
         for (int x = 0; x < boardArray.length; x++) {
-            StringBuilder row = new StringBuilder();
             for (int y = 0; y < boardArray[0].length; y++) {
-                if(boardArray[x][y] == token){
+                if (boardArray[x][y] == token) {
                     winCount++;
-                    if(winCount == 4){
+                    if (winCount == 4) {
                         handleWin();
                     }
-                }else{
+                } else {
                     winCount = 0;
                 }
             }
         }
         //Vertical check
         for (int y = 0; y < boardArray[0].length; y++) {
-            StringBuilder row = new StringBuilder();
             for (int x = 0; x < boardArray.length; x++) {
-                if(boardArray[x][y] == token){
+                if (boardArray[x][y] == token) {
                     winCount++;
-                    if(winCount == 4){
+                    if (winCount == 4) {
                         handleWin();
                     }
-                }else{
+                } else {
                     winCount = 0;
+                }
+            }
+        }
+
+        //Uphill diagonal check
+        for (int x = 0; x < boardArray.length; x++) {
+            int i = x;
+            int j = 0;
+            limit = false;
+            winCount = 0;
+            do {
+                try {
+                    if (boardArray[i][j] == token) {
+                        winCount++;
+                        if (winCount == 4) {
+                            handleWin();
+                        }
+                    } else {
+                        winCount = 0;
+                    }
+                    i--;
+                    j++;
+                } catch (ArrayIndexOutOfBoundsException exception) {
+                    limit = true;
+                }
+            } while (!limit);
+
+            if (x == boardArray.length - 1) {
+                for (int y = 0; y < boardArray[0].length; y++) {
+                    i = x;
+                    j = y;
+                    limit = false;
+                    winCount = 0;
+                    do {
+                        try {
+                            if (boardArray[i][j] == token) {
+                                winCount++;
+                                if (winCount == 4) {
+                                    handleWin();
+                                }
+                            } else {
+                                winCount = 0;
+                            }
+                            i--;
+                            j++;
+                        } catch (ArrayIndexOutOfBoundsException exception) {
+                            limit = true;
+                        }
+                    } while (!limit);
+                }
+            }
+        }
+
+        //Downhill diagonal check
+        for (int x = boardArray.length; x > -1; x--) {
+            int i = x;
+            int j = 0;
+            limit = false;
+            do {
+                try {
+                    if (boardArray[i][j] == token) {
+                        winCount++;
+                        if (winCount == 4) {
+                            handleWin();
+                        }
+                    } else {
+                        winCount = 0;
+                    }
+                    i++;
+                    j++;
+                } catch (ArrayIndexOutOfBoundsException exception) {
+                    limit = true;
+                }
+            } while (!limit);
+
+            if (x == 0) {
+                for (int y = 0; y < boardArray[0].length; y++) {
+                    i = x;
+                    j = y;
+                    limit = false;
+                    do {
+                        try {
+                            if (boardArray[i][j] == token) {
+                                winCount++;
+                                if (winCount == 4) {
+                                    handleWin();
+                                }
+                            } else {
+                                winCount = 0;
+                            }
+                            i++;
+                            j++;
+                        } catch (ArrayIndexOutOfBoundsException exception) {
+                            limit = true;
+                        }
+                    } while (!limit);
                 }
             }
         }
