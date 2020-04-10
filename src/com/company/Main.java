@@ -10,17 +10,13 @@ package com.company;
     static void homePage() {
 
         String option = System.console().readLine();
-
+        gameBoard board = new gameBoard();
         switch(option) {
             case "0":
-                gameBoard board = new gameBoard();
-                board.playerVsPlayer();
+                board.playerVsPlayer("pvp");
                 break;
             case "1":
-                clear();
-                startup();
-                System.out.println("No AI yet....\n\n");
-                homePage();
+                board.playerVsPlayer("pvc");
                 break;
             case "2":
                 clear();
