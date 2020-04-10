@@ -6,6 +6,7 @@ public class gameBoard {
 
     String[][] boardArray = new String[6][7];
     Stack<String> moveHistory = new Stack<String>();
+    Stack<String> backupMoveHistory = new Stack<String>();
 
     public void playerVsPlayer() {
 
@@ -53,7 +54,52 @@ public class gameBoard {
         handleTurn(column, token);
     }
 
+    void handleUndo(String token){
+
+        int index = moveHistory.size();
+
+        if(index <= 0){
+            retakeTurn(token);
+        }
+
+        if(backupMoveHistory.empty() || moveHistory.size() > backupMoveHistory.size()){
+            backupMoveHistory.addAll(moveHistory);
+        }
+
+        String undoMove = moveHistory.get(index-1);
+        String[] split = undoMove.split(",");
+
+        int x = Integer.parseInt(split[0]);
+        int y = Integer.parseInt(split[1]);
+
+        moveHistory.remove(index-1);
+        boardArray[x][y] = " ";
+    }
+
+    void handleRedo(String token){
+
+        int index = moveHistory.size();
+
+        String undoMove = backupMoveHistory.get(index);
+        String[] split = undoMove.split(",");
+
+        int x = Integer.parseInt(split[0]);
+        int y = Integer.parseInt(split[1]);
+
+        moveHistory.push(undoMove);
+        boardArray[x][y] = token;
+    }
+
     void handleTurn(String column, String token) {
+
+
+        if(column.equals("undo")){
+            handleUndo(token);
+            return;
+        }else if(column.equals("redo")){
+            handleRedo(token);
+            return;
+        }
 
         int y = 0;
         int x = 0;
@@ -63,6 +109,10 @@ public class gameBoard {
             y = Integer.parseInt(column);
             if (boardArray[lastRow][y] == " ") {
                 boardArray[lastRow][y] = token;
+                String move = lastRow + "," + y;
+                moveHistory.push(move);
+                boardScan(token);
+
             } else {
                 for (int i = 0; i < boardArray.length; i++) {
                     if (!boardArray[i][y].equals(" ")) {
@@ -108,7 +158,7 @@ public class gameBoard {
             columns.append("[" + i + "] ");
         }
 
-        System.out.println(columns + "\nPlease pick a column");
+        System.out.println(columns + "\nPlease pick a column\n\nUndo last turn - undo\nRedo last undo - redo");
     }
 
     void boardScan(String token) {
@@ -246,9 +296,17 @@ public class gameBoard {
     void handleWin(){
 
         display();
-        System.out.println("Winrar.... Same again?");
-        String win = System.console().readLine();
+        System.out.println("Winrar!");
+        try
+        {
+            Thread.sleep(4000);
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+        }
         Main home = new Main();
+        home.startup();
         home.homePage();
     }
 }
