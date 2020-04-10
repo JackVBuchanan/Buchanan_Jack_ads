@@ -1,13 +1,8 @@
 package com.company;
 
-
-import java.io.*;
-
  class Main {
 
-
     public static void main(String[] args) {
-
         startup();
         homePage();
     }
@@ -42,8 +37,10 @@ import java.io.*;
                 break;
             default:
                 clear();
-                System.out.println("You stupid?\n\n");
+                startup();
+                System.out.println("You stupid?...Try again\n\n");
                 homePage();
+
         }
     }
 
@@ -58,7 +55,6 @@ import java.io.*;
             "  \\_____\\___/|_| |_|_| |_|\\___|\\___|\\__| |_|  \\___/ \\__,_|_|   \n" +
             "                                                               \n" +
             "                                                              ");
-
 }
 
     static void startup() {
@@ -72,9 +68,7 @@ import java.io.*;
                          "[2] - About\n" +
                          "[3] - Options\n";
 
-
         System.out.println(options);
-
     }
 
     static void clear(){
