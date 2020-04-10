@@ -109,7 +109,7 @@ public class gameBoard {
             y = Integer.parseInt(column);
             if (boardArray[lastRow][y] == " ") {
                 boardArray[lastRow][y] = token;
-                String move = lastRow + "," + y;
+                String move = lastRow + "," + y + "," + token;
                 moveHistory.push(move);
                 boardScan(token);
 
@@ -119,7 +119,7 @@ public class gameBoard {
                         x = i;
                         x--;
                         boardArray[x][y] = token;
-                        String move = x + "," + y;
+                        String move = x + "," + y + "," + token;
                         moveHistory.push(move);
                         boardScan(token);
                         break;
@@ -293,20 +293,51 @@ public class gameBoard {
         }
     }
 
+    void actionReplay() {
+        System.out.println("We here");
+        newGame();
+        int i = 0;
+        System.out.println("We here2");
+
+        while (i < moveHistory.size()) {
+
+            moveHistory.get(i);
+            String undoMove = moveHistory.get(i);
+            String[] split = undoMove.split(",");
+
+            boardArray[Integer.parseInt(split[0])][Integer.parseInt(split[1])] = split[2];
+            i++;
+            display();
+            try
+            {
+                Thread.sleep(1000);
+            }
+            catch(InterruptedException ex)
+            {
+                Thread.currentThread().interrupt();
+            }
+        }
+        handleWin();
+    }
+
     void handleWin(){
 
         display();
         System.out.println("Winrar!");
-        try
-        {
-            Thread.sleep(4000);
+
+
+        System.out.println("\n0 - Home\n1 - Action Replay\n");
+        String option = System.console().readLine();
+
+        switch(option) {
+            case "0":
+                Main home = new Main();
+                home.startup();
+                home.homePage();
+                break;
+            case "1":
+                actionReplay();
+                break;
         }
-        catch(InterruptedException ex)
-        {
-            Thread.currentThread().interrupt();
-        }
-        Main home = new Main();
-        home.startup();
-        home.homePage();
     }
 }
