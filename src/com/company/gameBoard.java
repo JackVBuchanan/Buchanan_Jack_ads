@@ -5,17 +5,27 @@ import java.util.Random;
 
 public class gameBoard {
 
-    String[][] boardArray = new String[6][7];
+    String[][] boardArray = getBoardDimensions();
     Stack<String> moveHistory = new Stack<String>();
     Stack<String> backupMoveHistory = new Stack<String>();
 
+
+    private String[][] getBoardDimensions(){
+
+        String height = config.getConfigData("boardDimensionsHeight");
+        String length = config.getConfigData("boardDimensionsLength");
+        int x = Integer.parseInt(height);
+        int y = Integer.parseInt(length);
+
+        return new String[x][y];
+    }
 
     public void playerVsPlayer(String playerOption) {
 
         Player playerOne = new Player();
         Player playerTwo = new Player();
-        playerOne.playerToken = "O";
-        playerTwo.playerToken = "X";
+        playerOne.playerToken = config.getConfigData("playerOneToken");
+        playerTwo.playerToken = config.getConfigData("playerTwoToken");
 
         System.out.println("Please enter player one's name");
         playerOne.name = System.console().readLine();
@@ -45,7 +55,7 @@ public class gameBoard {
                 int randomNum = rand.nextInt(lengthX);
                 playerTwo.playerTurn = String.valueOf(randomNum);
                 System.out.println(playerTwo.name + " is thinking....");
-                handleWait(1000);
+                display.handleWait(1000);
                 handleTurn(playerTwo.playerTurn, playerTwo.playerToken);
             } else {
                 display();
@@ -60,16 +70,6 @@ public class gameBoard {
         while (!gameOver);
     }
 
-    void handleWait(int time){
-        try
-        {
-            Thread.sleep(time);
-        }
-        catch(InterruptedException ex)
-        {
-            Thread.currentThread().interrupt();
-        }
-    }
 
     void retakeTurn(String token) {
 
@@ -166,19 +166,22 @@ public class gameBoard {
 
     void display() {
 
-        Main options = new Main();
-        options.clear();
-        options.displayHeader();
+        display.clear();
+        display.displayHeader();
 
         for (int x = 0; x < boardArray.length; x++) {
             StringBuilder row = new StringBuilder();
             for (int y = 0; y < boardArray[0].length; y++) {
-                row.append("[" + boardArray[x][y] + "] ");
+                if(y > 9){
+                    row.append("[ " + boardArray[x][y] + "] ");
+                }else{
+                    row.append("[" + boardArray[x][y] + "] ");
+                }
             }
             System.out.println(row);
         }
         StringBuilder columns = new StringBuilder();
-        for (int i = 0; i < boardArray.length + 1; i++) {
+        for (int i = 0; i < boardArray[0].length; i++) {
             columns.append("[" + i + "] ");
         }
 
@@ -332,7 +335,7 @@ public class gameBoard {
             boardArray[Integer.parseInt(split[0])][Integer.parseInt(split[1])] = split[2];
             i++;
             display();
-            handleWait(1000);
+            display.handleWait(1000);
         }
         handleWin();
     }
@@ -348,9 +351,8 @@ public class gameBoard {
 
         switch(option) {
             case "0":
-                Main home = new Main();
-                home.startup();
-                home.homePage();
+                display.startup();
+                Main.homePage();
                 break;
             case "1":
                 actionReplay();
