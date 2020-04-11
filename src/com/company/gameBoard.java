@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.Stack;
+import java.util.Random;
 
 public class gameBoard {
 
@@ -8,25 +9,29 @@ public class gameBoard {
     Stack<String> moveHistory = new Stack<String>();
     Stack<String> backupMoveHistory = new Stack<String>();
 
-    public void playerVsPlayer() {
+
+    public void playerVsPlayer(String playerOption) {
 
         Player playerOne = new Player();
         Player playerTwo = new Player();
         playerOne.playerToken = "O";
         playerTwo.playerToken = "X";
 
-        System.out.println("Please Enter player one's name");
+        System.out.println("Please enter player one's name");
         playerOne.name = System.console().readLine();
-
-        System.out.println("Please Enter player two's name");
+        if (playerOption.equals("pvc")) {
+            System.out.println("Please enter the computer's name");
+        } else {
+            System.out.println("Please enter player two's name");
+        }
         playerTwo.name = System.console().readLine();
 
         newGame();
 
+        Random rand = new Random();
         boolean gameOver = false;
         int counter = 0;
-        String token = "X";
-        boardScan(token);
+        int lengthX = boardArray.length+1;
 
         do {
             counter++;
@@ -35,16 +40,35 @@ public class gameBoard {
             playerOne.playerTurn = System.console().readLine();
             handleTurn(playerOne.playerTurn, playerOne.playerToken);
 
-            display();
-            System.out.println(playerTwo.name + ", please take your turn");
-            playerTwo.playerTurn = System.console().readLine();
-            handleTurn(playerTwo.playerTurn, playerTwo.playerToken);
-
+            if (playerOption.equals("pvc")) {
+                display();
+                int randomNum = rand.nextInt(lengthX);
+                playerTwo.playerTurn = String.valueOf(randomNum);
+                System.out.println(playerTwo.name + " is thinking....");
+                handleWait(1000);
+                handleTurn(playerTwo.playerTurn, playerTwo.playerToken);
+            } else {
+                display();
+                System.out.println(playerTwo.name + ", please take your turn");
+                playerTwo.playerTurn = System.console().readLine();
+                handleTurn(playerTwo.playerTurn, playerTwo.playerToken);
+            }
             if (counter > 42) {
                 gameOver = true;
             }
         }
         while (!gameOver);
+    }
+
+    void handleWait(int time){
+        try
+        {
+            Thread.sleep(time);
+        }
+        catch(InterruptedException ex)
+        {
+            Thread.currentThread().interrupt();
+        }
     }
 
     void retakeTurn(String token) {
@@ -308,14 +332,7 @@ public class gameBoard {
             boardArray[Integer.parseInt(split[0])][Integer.parseInt(split[1])] = split[2];
             i++;
             display();
-            try
-            {
-                Thread.sleep(1000);
-            }
-            catch(InterruptedException ex)
-            {
-                Thread.currentThread().interrupt();
-            }
+            handleWait(1000);
         }
         handleWin();
     }
@@ -323,7 +340,7 @@ public class gameBoard {
     void handleWin(){
 
         display();
-        System.out.println("Winrar!");
+        System.out.println("\nWinrar!");
 
 
         System.out.println("\n0 - Home\n1 - Action Replay\n");
