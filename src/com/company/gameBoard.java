@@ -9,7 +9,6 @@ public class gameBoard {
     Stack<String> moveHistory = new Stack<String>();
     Stack<String> backupMoveHistory = new Stack<String>();
 
-
     private String[][] getBoardDimensions(){
 
         String height = config.getConfigData("boardDimensionsHeight");
@@ -38,49 +37,52 @@ public class gameBoard {
 
         newGame();
 
-        Random rand = new Random();
-        boolean gameOver = false;
-        int counter = 0;
-        int lengthX = boardArray.length+1;
-
-        do {
-            counter++;
-            display();
-            System.out.println(playerOne.name + ", please take your turn");
-            playerOne.playerTurn = System.console().readLine();
-            handleTurn(playerOne.playerTurn, playerOne.playerToken);
-
-            if (playerOption.equals("pvc")) {
-                display();
-                int randomNum = rand.nextInt(lengthX);
-                playerTwo.playerTurn = String.valueOf(randomNum);
-                System.out.println(playerTwo.name + " is thinking....");
-                display.handleWait(1000);
-                handleTurn(playerTwo.playerTurn, playerTwo.playerToken);
-            } else {
-                display();
-                System.out.println(playerTwo.name + ", please take your turn");
-                playerTwo.playerTurn = System.console().readLine();
-                handleTurn(playerTwo.playerTurn, playerTwo.playerToken);
-            }
-            if (counter > 42) {
-                gameOver = true;
-            }
-        }
-        while (!gameOver);
+        handleTurn(playerOne, playerTwo, playerOption);
     }
 
+   void handleTurn(Player playerOne, Player playerTwo, String playerOption){
+
+       Random rand = new Random();
+       boolean gameOver = false;
+       int counter = 0;
+       int lengthX = boardArray.length-1;
+
+       do {
+           counter++;
+           display();
+           System.out.println(playerOne.name + ", please take your turn");
+           playerOne.playerTurn = System.console().readLine();
+           handleMove(playerOne.playerTurn, playerOne.playerToken);
+
+           if (playerOption.equals("pvc")) {
+               display();
+               int randomNum = rand.nextInt(lengthX);
+               playerTwo.playerTurn = String.valueOf(randomNum);
+               System.out.println(playerTwo.name + " is thinking...." + randomNum);
+               display.handleWait(1000);
+               handleMove(playerTwo.playerTurn, playerTwo.playerToken);
+           } else {
+               display();
+               System.out.println(playerTwo.name + ", please take your turn");
+               playerTwo.playerTurn = System.console().readLine();
+               handleMove(playerTwo.playerTurn, playerTwo.playerToken);
+           }
+           if (counter > 42) {
+               gameOver = true;
+           }
+       }while (!gameOver);
+   }
 
     void retakeTurn(String token) {
 
         System.out.println("That was not a valid move.... try again");
         String column = System.console().readLine();
-        handleTurn(column, token);
+        handleMove(column, token);
     }
 
     void handleUndo(String token){
 
-        int index = moveHistory.size();
+        int index = moveHistory.size()-1;
 
         if(index <= 0){
             retakeTurn(token);
@@ -90,14 +92,29 @@ public class gameBoard {
             backupMoveHistory.addAll(moveHistory);
         }
 
-        String undoMove = moveHistory.get(index-1);
+        String undoMove = moveHistory.get(index);
         String[] split = undoMove.split(",");
 
         int x = Integer.parseInt(split[0]);
         int y = Integer.parseInt(split[1]);
 
-        moveHistory.remove(index-1);
-        boardArray[x][y] = " ";
+        if(split[2].equals("popEnd")){
+            while(!moveHistory.get(index).contains("popStart")){
+                moveHistory.remove(index);
+                index--;
+            }
+            moveHistory.remove(index);
+            for (int i = 0; i < moveHistory.size(); i++) {
+                undoMove = moveHistory.get(i);
+                split = undoMove.split(",");
+                x = Integer.parseInt(split[0]);
+                y = Integer.parseInt(split[1]);
+                boardArray[x][y] = split[2];
+            }
+        }else{
+            moveHistory.remove(index-1);
+            boardArray[x][y] = " ";
+        }
     }
 
     void handleRedo(String token){
@@ -114,14 +131,40 @@ public class gameBoard {
         boardArray[x][y] = token;
     }
 
-    void handleTurn(String column, String token) {
+    void handlePop(String[] column, String token){
+        try{
+            int y = Integer.parseInt(column[1]);
+            //Vertical check
+            String move = "0,0,popStart";
+            moveHistory.push(move);
+            for (int x = boardArray.length-1; x > 0; x--) {
+                boardArray[x][y] = boardArray[x-1][y];
+                move = x + "," + y + "," + token;
+                moveHistory.push(move);
+            }
+            moveHistory.push("0,0,popEnd");
+            boardArray[0][y] = " ";
+            boardScan(token);
+        }catch(ArrayIndexOutOfBoundsException ignored){
 
+        }catch (NumberFormatException exception){
+            retakeTurn(token);
+        }
+    }
+
+    void handleMove(String column, String token) {
 
         if(column.equals("undo")){
             handleUndo(token);
             return;
         }else if(column.equals("redo")){
             handleRedo(token);
+            return;
+        }
+
+        if(column.contains("PopOut")){
+            String[] popSplit = column.split(" ");
+            handlePop(popSplit, token);
             return;
         }
 
@@ -136,7 +179,6 @@ public class gameBoard {
                 String move = lastRow + "," + y + "," + token;
                 moveHistory.push(move);
                 boardScan(token);
-
             } else {
                 for (int i = 0; i < boardArray.length; i++) {
                     if (!boardArray[i][y].equals(" ")) {
@@ -172,9 +214,9 @@ public class gameBoard {
         for (int x = 0; x < boardArray.length; x++) {
             StringBuilder row = new StringBuilder();
             for (int y = 0; y < boardArray[0].length; y++) {
-                if(y > 9){
+                if (y > 9) {
                     row.append("[ " + boardArray[x][y] + "] ");
-                }else{
+                } else {
                     row.append("[" + boardArray[x][y] + "] ");
                 }
             }
@@ -185,7 +227,30 @@ public class gameBoard {
             columns.append("[" + i + "] ");
         }
 
-        System.out.println(columns + "\nPlease pick a column\n\nUndo last turn - undo\nRedo last undo - redo");
+        System.out.println(columns);
+        if (config.getConfigData("gameMode").equals("PopOut")) {
+            StringBuilder popColumns = new StringBuilder();
+            String bottomToken = config.getConfigData("boardDimensionsHeight");
+            int num = Integer.parseInt(bottomToken);
+            for (int i = 0; i < boardArray[0].length; i++) {
+                if (boardArray[num - 1][i].equals(getPlayerTurn())) {
+                    popColumns.append(" V  ");
+                } else {
+                    popColumns.append("    ");
+                }
+            }
+            System.out.println(popColumns + "\n->To pop type: pop <number>");
+        }
+        System.out.println("\n->To undo last turn type: undo\n->To redo last undo type: redo\n");
+    }
+
+    String getPlayerTurn(){
+
+        if (moveHistory.size() % 2 == 0){
+            return config.getConfigData("playerOneToken");
+        }else{
+            return config.getConfigData("playerTwoToken");
+        }
     }
 
     void boardScan(String token) {
@@ -321,10 +386,8 @@ public class gameBoard {
     }
 
     void actionReplay() {
-        System.out.println("We here");
         newGame();
         int i = 0;
-        System.out.println("We here2");
 
         while (i < moveHistory.size()) {
 

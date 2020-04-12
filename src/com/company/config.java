@@ -32,7 +32,7 @@ public class config {
         String optionsDisplay = "--Settings--\n\n" +
                 "[0] - Game Board size\n" +
                 "[1] - Player tokens\n" +
-                "[2] - Game options\n" +
+                "[2] - Game mode\n" +
                 "[3] - Home\n";
         System.out.println(optionsDisplay);
 
@@ -70,6 +70,16 @@ public class config {
                 display.handleWait(1000);
                 displayConfig();
             case "2":
+                System.out.println("Please pick a game mode:\n\n" + "[0] - Connect 4\n[1] - PopOut\n\nCurrent game mode: " + getConfigData("gameMode"));
+                String gameMode = System.console().readLine();
+                if(gameMode.equals("0")){
+                    saveSetting("gameMode", "Connect4");
+                }else{
+                    saveSetting("gameMode", "PopOut");
+                }
+                System.out.println("Saving settings...");
+                display.handleWait(1000);
+                displayConfig();
                 break;
             case "3":
                 display.clear();
