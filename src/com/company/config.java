@@ -9,14 +9,14 @@ public class config {
 
         try {
             String basePath = System.getProperty("user.dir");
-            basePath = basePath.split("connect4")[0];
+            basePath = basePath.split("Buchanan_Jack_ads")[0];
 
-            FileInputStream in = new FileInputStream(basePath + "connect4/src/properties/config.properties");
+            FileInputStream in = new FileInputStream(basePath + "Buchanan_Jack_ads/src/properties/config.properties");
             Properties props = new Properties();
             props.load(in);
             in.close();
 
-            FileOutputStream out = new FileOutputStream(basePath + "connect4/src/properties/config.properties");
+            FileOutputStream out = new FileOutputStream(basePath + "Buchanan_Jack_ads/src/properties/config.properties");
             props.setProperty(key, value);
             props.store(out, null);
             out.close();
@@ -92,9 +92,9 @@ public class config {
         String value = "";
         try {
             String basePath = System.getProperty("user.dir");
-            basePath = basePath.split("connect4")[0];
+            basePath = basePath.split("Buchanan_Jack_ads")[0];
 
-            FileInputStream in = new FileInputStream(basePath + "connect4/src/properties/config.properties");
+            FileInputStream in = new FileInputStream(basePath + "Buchanan_Jack_ads/src/properties/config.properties");
             Properties props = new Properties();
             props.load(in);
             value = props.getProperty(key);
