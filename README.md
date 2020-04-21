@@ -21,3 +21,4 @@
 - Project source code: Buchanan_Jack_ads/src/com/company/*
 - Jar manifest file: Buchanan_Jack_ads/src/META-INF/MANIFEST.MF
 - Properties file: Buchanan_Jack_ads/src/properties/config.properties
+- Executable jar: Buchanan_Jack_ads/executable/connect4.jar
